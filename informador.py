@@ -13,49 +13,32 @@ class Informador:
 
 
     def scrapping(self):
-        url = 'http://aviso.informador.com.mx/index.php/bienes_raices/busqueda?selecciono=1&ciudad_autocomplete=0&colonia_autocomplete=&transaccion=1&tipo=1&consulta=Zona+Metropolitana&precio_min=min&precio_max=max&recamaras_min=0&recamaras_max=0&metros_min=0&metros_max=0&quick-search=Zona+metropolitana-&quick-searchZap=Zapopan-3&quick-searchGdl=Guadalajara-2&quick-searchTlaq=Tlaquepaque-5&quick-searchTon=Tonal%C3%A1-4'
-        r = requests.get(url)
-        r.encoding = 'utf-8'
-        soup = BeautifulSoup(r.text, 'html.parser')
-        items = soup.find_all(class_='items')
-        casas = items[0].find_all('li')
+        t_url = ['http://aviso.informador.com.mx/index.php/bienes_raices/busqueda?selecciono=1&ciudad_autocomplete=&colonia_autocomplete=&transaccion=2&tipo=1&consulta=Zona+metropolitana&precio_min=min&precio_max=max&recamaras_min=0&recamaras_max=0&metros_min=0&metros_max=0&quick-search=Zona+metropolitana-&quick-searchZap=Zapopan-3&quick-searchGdl=Guadalajara-2&quick-searchTlaq=Tlaquepaque-5&quick-searchTon=Tonal%C3%A1-4', 'http://aviso.informador.com.mx/index.php/bienes_raices/busqueda?selecciono=1&ciudad_autocomplete=0&colonia_autocomplete=&transaccion=1&tipo=1&consulta=Zona+Metropolitana&precio_min=min&precio_max=max&recamaras_min=0&recamaras_max=0&metros_min=0&metros_max=0&quick-search=Zona+metropolitana-&quick-searchZap=Zapopan-3&quick-searchGdl=Guadalajara-2&quick-searchTlaq=Tlaquepaque-5&quick-searchTon=Tonal%C3%A1-4']
+        for i in range(0, 2):
+            r = requests.get(t_url[i])
+            r.encoding = 'utf-8'
+            soup = BeautifulSoup(r.text, 'html.parser')
+            items = soup.find_all(class_='items')
+            casas = items[0].find_all('li')
 
-        self.scrapping_casas(casas)
+            if i == 0:
+                tipo = "Renta"
+            else:
+                tipo = "Venta"
+            self.scrapping_casas(casas, tipo)
 
-        paginas = soup.find(class_="pagination")
-        paginas = paginas.find_all('li')
-        urls = []
-        i = 2
-        while i < len(paginas) - 1:
-            # print(paginas[i].a['href'])
-            urls.append(paginas[i].a['href'])
-            i = i + 1
+            paginas = soup.find(class_="pagination")
+            paginas = paginas.find_all('li')
+            urls = []
+            i = 2
+            while i < len(paginas) - 1:
+                # print(paginas[i].a['href'])
+                urls.append(paginas[i].a['href'])
+                i = i + 1
 
-        self.scrapping_paginas(urls)
-        self.scrapping_renta()
+            self.scrapping_paginas(urls, tipo)
 
-    def scrapping_renta(self):
-        url = 'http://aviso.informador.com.mx/index.php/bienes_raices/busqueda?selecciono=1&ciudad_autocomplete=&colonia_autocomplete=&transaccion=2&tipo=1&consulta=Zona+metropolitana&precio_min=min&precio_max=max&recamaras_min=0&recamaras_max=0&metros_min=0&metros_max=0&quick-search=Zona+metropolitana-&quick-searchZap=Zapopan-3&quick-searchGdl=Guadalajara-2&quick-searchTlaq=Tlaquepaque-5&quick-searchTon=Tonal%C3%A1-4'
-        r = requests.get(url)
-        r.encoding = 'utf-8'
-        soup = BeautifulSoup(r.text, 'html.parser')
-        items = soup.find_all(class_='items')
-        casas = items[0].find_all('li')
-
-        self.scrapping_casas(casas)
-
-        paginas = soup.find(class_="pagination")
-        paginas = paginas.find_all('li')
-        urls = []
-        i = 2
-        while i < len(paginas) - 1:
-            # print(paginas[i].a['href'])
-            urls.append(paginas[i].a['href'])
-            i = i + 1
-
-        self.scrapping_paginas(urls)
-
-    def scrapping_paginas(self, urls):
+    def scrapping_paginas(self, urls, tipo):
         for url in urls:
             r = requests.get(url)
             r.encoding = 'utf-8'
@@ -63,12 +46,13 @@ class Informador:
             items = soup.find_all(class_='items')
             casas = items[0].find_all('li')
 
-            self.scrapping_casas(casas)
+            self.scrapping_casas(casas, tipo)
 
 
-    def scrapping_casas(self, casas):
+    def scrapping_casas(self, casas, tipo):
         for c in casas:
             casa = {
+                "tipo" : tipo,
                 "ubicacion": c.find_all(class_='location')[0].text,
                 "titulo": c.a.text,
                 "precio": c.h5.text,
