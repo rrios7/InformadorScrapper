@@ -54,7 +54,7 @@ class Informador:
             casa = {
                 "tipo" : tipo,
                 "ubicacion": c.find_all(class_='location')[0].text,
-                "titulo": c.a.text,
+                "titulo": c.find_all(class_='item-header')[0].h4.a.text,
                 "precio": c.h5.text,
                 "descripcion": c.p.text,
                 "recamaras": c.find(class_='info-rec').text,

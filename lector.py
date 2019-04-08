@@ -65,13 +65,14 @@ def insertar_imagen(url, id_casa):
 
 def insertar_bienraiz(casa, id_colonia, id_fecha):
     insert = 'INSERT INTO bienraiz(titulo, ' \
-             'precio, m2, rooms, baths, cars, ' \
+             'precio, m2, m2_2, rooms, baths, cars, ' \
              'descripcion, id_tipo,' \
              'id_origen, id_colonia, id_fecha ) ' \
-             'VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+             'VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
     cursor.execute(insert, (casa['titulo'],
                             casa['precio'],
                             casa['m2'],
+                            casa['m2_2'],
                             casa['recamaras'],
                             casa['wc'],
                             casa['cars'],
