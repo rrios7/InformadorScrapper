@@ -70,7 +70,7 @@ def insertar_bienraiz(casa, id_colonia, id_fecha):
              'id_origen, id_colonia, id_fecha ) ' \
              'VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
     cursor.execute(insert, (casa['titulo'],
-                            casa['precio'][1:],
+                            casa['precio'],
                             casa['m2'],
                             casa['m2_2'],
                             casa['recamaras'],
